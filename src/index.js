@@ -1,3 +1,8 @@
+/**
+ * Copyright 2018 Initiate Thinking
+ * Author: Nigel Daniels
+ * MIT Licensed
+ */
 import {MongoClient} from 'mongodb';
 import db_config from 'db.json';
 
