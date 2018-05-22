@@ -1,22 +1,28 @@
 /**
- * Copyright 2018 Initiate Thinking
+ * Copyright 2018 Initiate Thinking (https://www.initiatethinking.com)
  * Author: Nigel Daniels
  * MIT Licensed
  */
 import {MongoClient} from 'mongodb';
-import db_config from 'db.json';
 
-export class MongoDBStore {
+let options = {
+	url: "mongodb://localhost/",
+    connect_opts:	{},
+    name: "redux-db",
+    collection: "state-collection"
+};
 
-	constructor() {
-		this.URL = !process.env.MONGO_URL ? db_config.url : process.env.MONGO_URL;
-		this.ConnectOpts = !process.env.MONGO_CONNECT ? db_config.connectopts : process.env.MONGO_CONNECT;
-		this.Name = !process.env.MONGO_DB_NAME ? db_config.name : process.env.MONGO_DB_NAME;
-		this.Collection = !process.env.MONGO_COLLECTION ? db_config.collection : process.env.MONGO_COLLECTION;
-		}
+const MongoDBStore = {
+
+	configure: (opts = options) => {
+		this.URL = !process.env.MONGO_URL ? opts.url : process.env.MONGO_URL;
+		this.ConnectOpts = !process.env.MONGO_CONNECT ? opts.connectopts : process.env.MONGO_CONNECT;
+		this.Name = !process.env.MONGO_DB_NAME ? opts.name : process.env.MONGO_DB_NAME;
+		this.Collection = !process.env.MONGO_COLLECTION ? opts.collection : process.env.MONGO_COLLECTION;
+		},
 
 
-	getItem(key) {
+	getItem: (key) => {
 		return new Promise ((resolve, reject) => {
 			try {
 				MongoClient.connect(this.URL, this.ConnectOpts, function(err, client) {
@@ -36,9 +42,9 @@ export class MongoDBStore {
 			catch (err)
 				{reject(err);}
 			});
-		}
+		},
 
-	setItem(key, value) {
+	setItem: (key, value) => {
 		return new Promise ((resolve, reject) => {
 			try {
 				MongoClient.connect(this.URL, this.ConnectOpts, function(err, client) {
@@ -58,9 +64,9 @@ export class MongoDBStore {
 			catch (err)
 				{reject(err);}
 			});
-		};
+		},
 
-	removeItem(key) {
+	removeItem: (key) => {
 		return new Promise ((resolve, reject) => {
 			try {
 				MongoClient.connect(this.URL, this.ConnectOpts, function(err, client) {
@@ -83,3 +89,5 @@ export class MongoDBStore {
 		}
 
 	}
+
+export default MongoDBStore;

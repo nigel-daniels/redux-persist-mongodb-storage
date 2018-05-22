@@ -1,6 +1,0 @@
-{
-	"url": "mongodb://localhost/",
-	"connect_opts":	{},
-	"name": "redux-db",
-	"collection": "state-collection"
-}
