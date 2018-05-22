@@ -4,8 +4,7 @@
   "description": "A storage object for redux-persist to use MongoDb when using Redux server side.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "./node_modules/.bin/webpack",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "./node_modules/.bin/webpack"
   },
   "keywords": [
     "Redux",
