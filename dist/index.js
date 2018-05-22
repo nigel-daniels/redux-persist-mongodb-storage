@@ -37346,17 +37346,6 @@ module.exports = function (module) {
 
 /***/ }),
 
-/***/ "./src/db.json":
-/*!*********************!*\
-  !*** ./src/db.json ***!
-  \*********************/
-/*! exports provided: url, connect_opts, name, collection, default */
-/***/ (function(module) {
-
-module.exports = {"url":"mongodb://localhost/","connect_opts":{},"name":"redux-db","collection":"state-collection"};
-
-/***/ }),
-
 /***/ "./src/index.js":
 /*!**********************!*\
   !*** ./src/index.js ***!
@@ -37370,127 +37359,119 @@ module.exports = {"url":"mongodb://localhost/","connect_opts":{},"name":"redux-d
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.MongoDBStore = undefined;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _mongodb = __webpack_require__(/*! mongodb */ "./node_modules/mongodb/index.js");
 
-var _db = __webpack_require__(/*! db.json */ "./src/db.json");
+var options = {
+	url: "mongodb://localhost/",
+	connect_opts: {},
+	name: "redux-db",
+	collection: "state-collection"
+}; /**
+    * Copyright 2018 Initiate Thinking (https://www.initiatethinking.com)
+    * Author: Nigel Daniels
+    * MIT Licensed
+    */
 
-var _db2 = _interopRequireDefault(_db);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var MongoDBStore = {
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	configure: function configure() {
+		var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : options;
 
-var MongoDBStore = exports.MongoDBStore = function () {
-	function MongoDBStore() {
-		_classCallCheck(this, MongoDBStore);
+		undefined.URL = !process.env.MONGO_URL ? opts.url : process.env.MONGO_URL;
+		undefined.ConnectOpts = !process.env.MONGO_CONNECT ? opts.connectopts : process.env.MONGO_CONNECT;
+		undefined.Name = !process.env.MONGO_DB_NAME ? opts.name : process.env.MONGO_DB_NAME;
+		undefined.Collection = !process.env.MONGO_COLLECTION ? opts.collection : process.env.MONGO_COLLECTION;
+	},
 
-		this.URL = !process.env.MONGO_URL ? _db2.default.url : process.env.MONGO_URL;
-		this.ConnectOpts = !process.env.MONGO_CONNECT ? _db2.default.connectopts : process.env.MONGO_CONNECT;
-		this.Name = !process.env.MONGO_DB_NAME ? _db2.default.name : process.env.MONGO_DB_NAME;
-		this.Collection = !process.env.MONGO_COLLECTION ? _db2.default.collection : process.env.MONGO_COLLECTION;
+	getItem: function getItem(key) {
+		return new Promise(function (resolve, reject) {
+			try {
+				_mongodb.MongoClient.connect(undefined.URL, undefined.ConnectOpts, function (err, client) {
+					if (err) {
+						throw err;
+					}
+
+					var db = client.db(this.Name);
+
+					var collection = db.collection(this.Collection);
+
+					collection.findOne({ key: key }, { bypassDocumentValidation: true }, function (err, result) {
+						if (err) {
+							throw err;
+						}
+						client.close();
+						process.nextTick(function () {
+							return resolve(result);
+						});
+					});
+				});
+			} catch (err) {
+				reject(err);
+			}
+		});
+	},
+
+	setItem: function setItem(key, value) {
+		return new Promise(function (resolve, reject) {
+			try {
+				_mongodb.MongoClient.connect(undefined.URL, undefined.ConnectOpts, function (err, client) {
+					if (err) {
+						throw err;
+					}
+
+					var db = client.db(this.Name);
+
+					var collection = db.collection(this.Collection);
+
+					collection.replaceOne({ key: key, value: value }, { bypassDocumentValidation: true, upsert: true }, function (err, result) {
+						if (err) {
+							throw err;
+						}
+						client.close();
+						process.nextTick(function () {
+							return resolve();
+						});
+					});
+				});
+			} catch (err) {
+				reject(err);
+			}
+		});
+	},
+
+	removeItem: function removeItem(key) {
+		return new Promise(function (resolve, reject) {
+			try {
+				_mongodb.MongoClient.connect(undefined.URL, undefined.ConnectOpts, function (err, client) {
+					if (err) {
+						throw err;
+					}
+
+					var db = client.db(this.Name);
+
+					var collection = db.collection(this.Collection);
+
+					collection.findOneandDelete({ key: key }, { bypassDocumentValidation: true }, function (err, result) {
+						if (err) {
+							throw err;
+						}
+						client.close();
+						process.nextTick(function () {
+							return resolve();
+						});
+					});
+				});
+			} catch (err) {
+				reject(err);
+			}
+		});
 	}
 
-	_createClass(MongoDBStore, [{
-		key: 'getItem',
-		value: function getItem(key) {
-			var _this = this;
+};
 
-			return new Promise(function (resolve, reject) {
-				try {
-					_mongodb.MongoClient.connect(_this.URL, _this.ConnectOpts, function (err, client) {
-						if (err) {
-							throw err;
-						}
-
-						var db = client.db(this.Name);
-
-						var collection = db.collection(this.Collection);
-
-						collection.findOne({ key: key }, { bypassDocumentValidation: true }, function (err, result) {
-							if (err) {
-								throw err;
-							}
-							client.close();
-							process.nextTick(function () {
-								return resolve(result);
-							});
-						});
-					});
-				} catch (err) {
-					reject(err);
-				}
-			});
-		}
-	}, {
-		key: 'setItem',
-		value: function setItem(key, value) {
-			var _this2 = this;
-
-			return new Promise(function (resolve, reject) {
-				try {
-					_mongodb.MongoClient.connect(_this2.URL, _this2.ConnectOpts, function (err, client) {
-						if (err) {
-							throw err;
-						}
-
-						var db = client.db(this.Name);
-
-						var collection = db.collection(this.Collection);
-
-						collection.replaceOne({ key: key, value: value }, { bypassDocumentValidation: true, upsert: true }, function (err, result) {
-							if (err) {
-								throw err;
-							}
-							client.close();
-							process.nextTick(function () {
-								return resolve();
-							});
-						});
-					});
-				} catch (err) {
-					reject(err);
-				}
-			});
-		}
-	}, {
-		key: 'removeItem',
-		value: function removeItem(key) {
-			var _this3 = this;
-
-			return new Promise(function (resolve, reject) {
-				try {
-					_mongodb.MongoClient.connect(_this3.URL, _this3.ConnectOpts, function (err, client) {
-						if (err) {
-							throw err;
-						}
-
-						var db = client.db(this.Name);
-
-						var collection = db.collection(this.Collection);
-
-						collection.findOneandDelete({ key: key }, { bypassDocumentValidation: true }, function (err, result) {
-							if (err) {
-								throw err;
-							}
-							client.close();
-							process.nextTick(function () {
-								return resolve();
-							});
-						});
-					});
-				} catch (err) {
-					reject(err);
-				}
-			});
-		}
-	}]);
-
-	return MongoDBStore;
-}();
+exports.default = MongoDBStore;
 
 /***/ }),
 
