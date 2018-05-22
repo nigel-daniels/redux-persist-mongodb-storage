@@ -1,0 +1,28 @@
+{
+  "name": "redux-persist-mongodb-storage",
+  "version": "1.0.0",
+  "description": "A storage object for redux-persist to use MongoDb when using Redux server side.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "./node_modules/.bin/webpack",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Redux",
+    "redux-persist",
+    "MongoDb"
+  ],
+  "author": "Nigel Daniels",
+  "license": "MIT",
+  "dependencies": {
+    "mongodb": "^3.1.0-beta4"
+  },
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.7.0",
+    "source-map-loader": "^0.2.3",
+    "webpack": "^4.8.3",
+    "webpack-cli": "^2.1.3"
+  }
+}

@@ -1,0 +1,21 @@
+# Copyright 2017 Initiate Thinking Limited
+# Author: Nigel Daniels
+# MIT Licensed
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories
+node_modules
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Apple fs
+.AppleDouble/
+.DS_Store
