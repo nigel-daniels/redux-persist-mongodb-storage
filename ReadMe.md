@@ -37,11 +37,11 @@ export default function makeStore() {
 ```
 
 ## Configuring MongoDb
-There are two ways to set up MongoDb so that you can connect to your own instance of MongoDb.  The first is pass a configuration object to the `configure` method.  The other is to set environment variables in the system or container running the `redux-persist` module.  The configuration values and their environment variable equivalents are in the table below:
+To configure this object to work with MongoDb pass a configuration object to the `configure` method.  The configuration values are in the table below with their defaults:
 
-| Config | Env | Default | Description|
-| --- | --- | --- | --- |
-| `url` | `MONGO_URL` | `mongodb://localhost/` | The url used to connect to MongoDb upon.  This conforms the the MongoDb [URL documentation](https://docs.mongodb.com/manual/reference/connection-string/). |
-| `connect_opts` | `MONGO_CONNECT` | `{}` | Connection options passed tot he connect method call.  These conform to the connection options used by the [MongoClient](http://mongodb.github.io/node-mongodb-native/3.0/api/MongoClient.html#.connect). |
-| `name` | `MONGO_DB_NAME` | `redux-db` | The name of the MongoDb database used. |
-| `collection` | `MONGO_COLLECTION` | `state-collection` | The name of the document collection used in the database. |
+| Config | Default | Description|
+| --- | --- | --- |
+| `url` | `mongodb://localhost/` | The url used to connect to MongoDb upon.  This conforms the the MongoDb [URL documentation](https://docs.mongodb.com/manual/reference/connection-string/). |
+| `connect_opts` | `{}` | Connection options passed tot he connect method call.  These conform to the connection options used by the [MongoClient](http://mongodb.github.io/node-mongodb-native/3.0/api/MongoClient.html#.connect). |
+| `name` | `redux-db` | The name of the MongoDb database used. |
+| `collection` | `state-collection` | The name of the document collection used in the database. |
