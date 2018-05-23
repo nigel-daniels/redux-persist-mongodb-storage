@@ -4,7 +4,8 @@
   "description": "A storage object for redux-persist to use MongoDb when using Redux server side.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "./node_modules/.bin/webpack"
+    "build": "./node_modules/.bin/webpack",
+    "test": "./node_modules/.bin/mocha -r babel-core/register test/**/*.spec.js"
   },
   "keywords": [
     "Redux",
@@ -20,6 +21,8 @@
     "babel": "^6.23.0",
     "babel-loader": "^7.1.4",
     "babel-preset-env": "^1.7.0",
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0",
     "source-map-loader": "^0.2.3",
     "webpack": "^4.8.3",
     "webpack-cli": "^2.1.3"

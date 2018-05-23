@@ -3,39 +3,41 @@
  * Author: Nigel Daniels
  * MIT Licensed
  */
-import {MongoClient} from 'mongodb';
+import MongoClient from 'mongodb';
 
 let options = {
-	url: "mongodb://localhost/",
-    connect_opts:	{},
-    name: "redux-db",
-    collection: "state-collection"
+	url:			'mongodb://localhost:27017/',
+	connect_opts:	{useNewUrlParser: true},
+	name:			'reduxdb',
+	collection:		'state'
 };
+
 
 const MongoDBStore = {
 
-	configure: (opts = options) => {
-		this.URL = !process.env.MONGO_URL ? opts.url : process.env.MONGO_URL;
-		this.ConnectOpts = !process.env.MONGO_CONNECT ? opts.connectopts : process.env.MONGO_CONNECT;
-		this.Name = !process.env.MONGO_DB_NAME ? opts.name : process.env.MONGO_DB_NAME;
-		this.Collection = !process.env.MONGO_COLLECTION ? opts.collection : process.env.MONGO_COLLECTION;
-		},
+	configure: (opts) => {
+		options.url = !opts.url ? options.url : opts.url;
+		options.connect_opts = !opts.connect_opts ? options.connect_opts : opts.connect_opts;
+		options.name = !opts.name ? options.name : opts.name;
+		options.collection = !opts.collection ? options.collection : opts.collection;
+	},
 
 
 	getItem: (key) => {
 		return new Promise ((resolve, reject) => {
 			try {
-				MongoClient.connect(this.URL, this.ConnectOpts, function(err, client) {
+				MongoClient.connect(options.url, options.connect_opts, function(err, client) {
 					if (err) { throw err;}
 
-					const db = client.db(this.Name);
+					let db = client.db(options.name);
+					if (db === null) {throw new Error('No DB!');}
 
-					const collection = db.collection(this.Collection);
-
-					collection.findOne({key}, {bypassDocumentValidation: true}, function(err, result) {
-						if (err) {throw err;}
-						client.close();
-						process.nextTick(() => resolve(result));
+					db.collection(options.collection, (err, collection) => {
+						collection.findOne({key}, {bypassDocumentValidation: true}, function(err, result) {
+							if (err) {throw err;}
+							db.close();
+							process.nextTick(() => resolve(result));
+							});
 						});
 					});
 				}
@@ -44,21 +46,24 @@ const MongoDBStore = {
 			});
 		},
 
+
 	setItem: (key, value) => {
 		return new Promise ((resolve, reject) => {
 			try {
-				MongoClient.connect(this.URL, this.ConnectOpts, function(err, client) {
-	  				if (err) { throw err;}
 
-	  				const db = client.db(this.Name);
+				MongoClient.connect(options.url, options.connect_opts, (err, client) => {
+	  				if (err) {throw err;}
 
-					const collection = db.collection(this.Collection);
+					let db = client.db(options.name);
+					if (db === null) {throw new Error('No DB!');}
 
-	  				collection.replaceOne({key, value}, {bypassDocumentValidation: true, upsert: true}, function(err, result) {
-						if (err) {throw err;}
-	    				client.close();
-						process.nextTick(() => resolve());
-	  					});
+					db.collection(options.collection, (err, collection) => {
+						collection.replaceOne({key}, {key, value}, {upsert: true}, function(err, result) {
+							if (err) {throw err;}
+		    				client.close();
+							process.nextTick(() => resolve());
+		  					});
+						});
 					});
 				}
 			catch (err)
@@ -66,20 +71,22 @@ const MongoDBStore = {
 			});
 		},
 
+
 	removeItem: (key) => {
 		return new Promise ((resolve, reject) => {
 			try {
-				MongoClient.connect(this.URL, this.ConnectOpts, function(err, client) {
+				MongoClient.connect(options.url, options.connect_opts, function(err, client) {
 					if (err) { throw err;}
 
-					const db = client.db(this.Name);
+					let db = client.db(options.name);
+					if (db === null) {throw new Error('No DB!');}
 
-					const collection = db.collection(this.Collection);
-
-					collection.findOneandDelete({key}, {bypassDocumentValidation: true}, function(err, result) {
-						if (err) {throw err;}
-						client.close();
-						process.nextTick(() => resolve());
+					db.collection(options.collection, (err, collection) => {
+						collection.findOneandDelete({key}, function(err, result) {
+							if (err) {throw err;}
+							client.close();
+							process.nextTick(() => resolve());
+							});
 						});
 					});
 				}
@@ -88,6 +95,6 @@ const MongoDBStore = {
 			});
 		}
 
-	}
+	};
 
 export default MongoDBStore;

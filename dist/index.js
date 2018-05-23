@@ -37362,11 +37362,15 @@ Object.defineProperty(exports, "__esModule", {
 
 var _mongodb = __webpack_require__(/*! mongodb */ "./node_modules/mongodb/index.js");
 
+var _mongodb2 = _interopRequireDefault(_mongodb);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var options = {
-	url: "mongodb://localhost/",
-	connect_opts: {},
-	name: "redux-db",
-	collection: "state-collection"
+	url: 'mongodb://localhost:27017/',
+	connect_opts: { useNewUrlParser: true },
+	name: 'reduxdb',
+	collection: 'state'
 }; /**
     * Copyright 2018 Initiate Thinking (https://www.initiatethinking.com)
     * Author: Nigel Daniels
@@ -37376,34 +37380,35 @@ var options = {
 
 var MongoDBStore = {
 
-	configure: function configure() {
-		var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : options;
-
-		undefined.URL = !process.env.MONGO_URL ? opts.url : process.env.MONGO_URL;
-		undefined.ConnectOpts = !process.env.MONGO_CONNECT ? opts.connectopts : process.env.MONGO_CONNECT;
-		undefined.Name = !process.env.MONGO_DB_NAME ? opts.name : process.env.MONGO_DB_NAME;
-		undefined.Collection = !process.env.MONGO_COLLECTION ? opts.collection : process.env.MONGO_COLLECTION;
+	configure: function configure(opts) {
+		options.url = !opts.url ? options.url : opts.url;
+		options.connect_opts = !opts.connect_opts ? options.connect_opts : opts.connect_opts;
+		options.name = !opts.name ? options.name : opts.name;
+		options.collection = !opts.collection ? options.collection : opts.collection;
 	},
 
 	getItem: function getItem(key) {
 		return new Promise(function (resolve, reject) {
 			try {
-				_mongodb.MongoClient.connect(undefined.URL, undefined.ConnectOpts, function (err, client) {
+				_mongodb2.default.connect(options.url, options.connect_opts, function (err, client) {
 					if (err) {
 						throw err;
 					}
 
-					var db = client.db(this.Name);
+					var db = client.db(options.name);
+					if (db === null) {
+						throw new Error('No DB!');
+					}
 
-					var collection = db.collection(this.Collection);
-
-					collection.findOne({ key: key }, { bypassDocumentValidation: true }, function (err, result) {
-						if (err) {
-							throw err;
-						}
-						client.close();
-						process.nextTick(function () {
-							return resolve(result);
+					db.collection(options.collection, function (err, collection) {
+						collection.findOne({ key: key }, { bypassDocumentValidation: true }, function (err, result) {
+							if (err) {
+								throw err;
+							}
+							db.close();
+							process.nextTick(function () {
+								return resolve(result);
+							});
 						});
 					});
 				});
@@ -37416,22 +37421,26 @@ var MongoDBStore = {
 	setItem: function setItem(key, value) {
 		return new Promise(function (resolve, reject) {
 			try {
-				_mongodb.MongoClient.connect(undefined.URL, undefined.ConnectOpts, function (err, client) {
+
+				_mongodb2.default.connect(options.url, options.connect_opts, function (err, client) {
 					if (err) {
 						throw err;
 					}
 
-					var db = client.db(this.Name);
+					var db = client.db(options.name);
+					if (db === null) {
+						throw new Error('No DB!');
+					}
 
-					var collection = db.collection(this.Collection);
-
-					collection.replaceOne({ key: key, value: value }, { bypassDocumentValidation: true, upsert: true }, function (err, result) {
-						if (err) {
-							throw err;
-						}
-						client.close();
-						process.nextTick(function () {
-							return resolve();
+					db.collection(options.collection, function (err, collection) {
+						collection.replaceOne({ key: key }, { key: key, value: value }, { upsert: true }, function (err, result) {
+							if (err) {
+								throw err;
+							}
+							client.close();
+							process.nextTick(function () {
+								return resolve();
+							});
 						});
 					});
 				});
@@ -37444,22 +37453,25 @@ var MongoDBStore = {
 	removeItem: function removeItem(key) {
 		return new Promise(function (resolve, reject) {
 			try {
-				_mongodb.MongoClient.connect(undefined.URL, undefined.ConnectOpts, function (err, client) {
+				_mongodb2.default.connect(options.url, options.connect_opts, function (err, client) {
 					if (err) {
 						throw err;
 					}
 
-					var db = client.db(this.Name);
+					var db = client.db(options.name);
+					if (db === null) {
+						throw new Error('No DB!');
+					}
 
-					var collection = db.collection(this.Collection);
-
-					collection.findOneandDelete({ key: key }, { bypassDocumentValidation: true }, function (err, result) {
-						if (err) {
-							throw err;
-						}
-						client.close();
-						process.nextTick(function () {
-							return resolve();
+					db.collection(options.collection, function (err, collection) {
+						collection.findOneandDelete({ key: key }, function (err, result) {
+							if (err) {
+								throw err;
+							}
+							client.close();
+							process.nextTick(function () {
+								return resolve();
+							});
 						});
 					});
 				});
