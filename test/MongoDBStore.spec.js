@@ -1,41 +1,65 @@
-var MongoDBStore = require('../src/index');
+var MongoDBStore = require('../index');
 var expect = require('chai').expect;
 
-describe('MongoDBStore API', () => {
+describe('MongoDBStore API', function() {
 
-	var payload = {a: 1, b: 2, c: 3};
+	var payload1 = {a: 1, b: 2, c: 3};
+	var payload2 = {a: 4, b: 5, c: 6};
 
-	it ('Has setItem', () => {
-		var result1 = false;
+	it ('Can set item', function() {
 
-		MongoDBStore.setItem('test', payload)
-			.then(function() {
-				console.log('setItem ok');
-				this.result1 = true;
-				})
-			.catch(function(err) {
-				console.log(err.message);
-				});
+		MongoDBStore.setItem('test1', payload1)
+			.then(function() { done(); })
+			.catch(function(err) { done(err); });
+		});
 
-		expect(result1).to.be.true();
-	});
+	it ('Can set another item', function() {
 
-/*
-	it ('Has getItem', () => {
-		var result2 = null;
-		var _this = this;
+		MongoDBStore.setItem('test2', payload2)
+			.then(function() { done(); })
+			.catch(function(err) { done(err); });
+		});
 
-		MongoDBStore.getItem('test')
-			.then((doc) => {
-				console.log(' getItem ok = ' + doc);
-				_this.result2 = doc;
-				})
-			.catch((err) => {
-				console.log(err.message);
-				});
+	it ('Can get item', function() {
 
-		expect(result2).to.equal(payload);
-	});
-*/
+		MongoDBStore.getItem('test1')
+			.then(function(doc) { expect(doc).to.equal(payload1); })
+			.catch(function(err) { done(err); });
+		});
+
+	it ('Can change item', function() {
+
+		MongoDBStore.setItem('test1', payload2)
+			.then(function() { done(); })
+			.catch(function(err) { done(err); });
+		});
+
+	it ('Can get changed item', function() {
+
+		MongoDBStore.getItem('test1')
+			.then(function(doc) { expect(doc).to.equal(payload2); })
+			.catch(function(err) { done(err); });
+		});
+
+	it ('Can remove item', function() {
+
+		MongoDBStore.removeItem('test1')
+			.then(function() { done(); })
+			.catch(function(err) { done(err); });
+		});
+
+	it ('Can cannot get removed item', function() {
+
+		MongoDBStore.getItem('test1')
+			.then(function(doc) { expect(doc).to.be.undefined(); })
+			.catch(function(err) { done(err); });
+		});
+
+	it ('Can remove another item', function() {
+
+		MongoDBStore.removeItem('test2')
+			.then(function() { done(); })
+			.catch(function(err) { done(err); });
+		});
 
 });

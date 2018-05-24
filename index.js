@@ -33,9 +33,11 @@ const MongoDBStore = {
 					if (db === null) {throw new Error('No DB!');}
 
 					db.collection(options.collection, (err, collection) => {
+						if (err) {throw err;}
+
 						collection.findOne({key}, {bypassDocumentValidation: true}, function(err, result) {
 							if (err) {throw err;}
-							db.close();
+							client.close();
 							process.nextTick(() => resolve(result));
 							});
 						});
@@ -58,6 +60,8 @@ const MongoDBStore = {
 					if (db === null) {throw new Error('No DB!');}
 
 					db.collection(options.collection, (err, collection) => {
+						if (err) {throw err;}
+
 						collection.replaceOne({key}, {key, value}, {upsert: true}, function(err, result) {
 							if (err) {throw err;}
 		    				client.close();
@@ -82,7 +86,9 @@ const MongoDBStore = {
 					if (db === null) {throw new Error('No DB!');}
 
 					db.collection(options.collection, (err, collection) => {
-						collection.findOneandDelete({key}, function(err, result) {
+						if (err) {throw err;}
+
+						collection.findOneAndDelete({key}, function(err, result) {
 							if (err) {throw err;}
 							client.close();
 							process.nextTick(() => resolve());
