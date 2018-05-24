@@ -3,9 +3,9 @@
  * Author: Nigel Daniels
  * MIT Licensed
  */
-import MongoClient from 'mongodb';
+var MongoClient = require('mongodb');
 
-let options = {
+var options = {
 	url:			'mongodb://localhost:27017/',
 	connect_opts:	{useNewUrlParser: true},
 	name:			'reduxdb',
@@ -13,9 +13,9 @@ let options = {
 };
 
 
-const MongoDBStore = {
+var MongoDBStore = {
 
-	configure: (opts) => {
+	configure: function(opts) {
 		options.url = !opts.url ? options.url : opts.url;
 		options.connect_opts = !opts.connect_opts ? options.connect_opts : opts.connect_opts;
 		options.name = !opts.name ? options.name : opts.name;
@@ -23,8 +23,8 @@ const MongoDBStore = {
 	},
 
 
-	getItem: (key) => {
-		return new Promise ((resolve, reject) => {
+	getItem: function(key) {
+		return new Promise (function(resolve, reject) {
 			try {
 				MongoClient.connect(options.url, options.connect_opts, function(err, client) {
 					if (err) { throw err;}
@@ -32,13 +32,13 @@ const MongoDBStore = {
 					let db = client.db(options.name);
 					if (db === null) {throw new Error('No DB!');}
 
-					db.collection(options.collection, (err, collection) => {
+					db.collection(options.collection, function(err, collection) {
 						if (err) {throw err;}
 
 						collection.findOne({key}, {bypassDocumentValidation: true}, function(err, result) {
 							if (err) {throw err;}
 							client.close();
-							process.nextTick(() => resolve(result));
+							process.nextTick(function() {resolve(result);});
 							});
 						});
 					});
@@ -49,23 +49,23 @@ const MongoDBStore = {
 		},
 
 
-	setItem: (key, value) => {
-		return new Promise ((resolve, reject) => {
+	setItem: function(key, value) {
+		return new Promise (function(resolve, reject) {
 			try {
 
-				MongoClient.connect(options.url, options.connect_opts, (err, client) => {
+				MongoClient.connect(options.url, options.connect_opts, function(err, client) {
 	  				if (err) {throw err;}
 
 					let db = client.db(options.name);
 					if (db === null) {throw new Error('No DB!');}
 
-					db.collection(options.collection, (err, collection) => {
+					db.collection(options.collection, function(err, collection) {
 						if (err) {throw err;}
 
 						collection.replaceOne({key}, {key, value}, {upsert: true}, function(err, result) {
 							if (err) {throw err;}
 		    				client.close();
-							process.nextTick(() => resolve());
+							process.nextTick(function() {resolve();});
 		  					});
 						});
 					});
@@ -76,8 +76,8 @@ const MongoDBStore = {
 		},
 
 
-	removeItem: (key) => {
-		return new Promise ((resolve, reject) => {
+	removeItem: function(key) {
+		return new Promise (function(resolve, reject) {
 			try {
 				MongoClient.connect(options.url, options.connect_opts, function(err, client) {
 					if (err) { throw err;}
@@ -85,13 +85,13 @@ const MongoDBStore = {
 					let db = client.db(options.name);
 					if (db === null) {throw new Error('No DB!');}
 
-					db.collection(options.collection, (err, collection) => {
+					db.collection(options.collection, function(err, collection) {
 						if (err) {throw err;}
 
 						collection.findOneAndDelete({key}, function(err, result) {
 							if (err) {throw err;}
 							client.close();
-							process.nextTick(() => resolve());
+							process.nextTick(function() {resolve();});
 							});
 						});
 					});
@@ -103,4 +103,4 @@ const MongoDBStore = {
 
 	};
 
-export default MongoDBStore;
+module.exports = MongoDBStore;

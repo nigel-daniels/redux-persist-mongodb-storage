@@ -4,7 +4,7 @@
   "description": "A storage object for redux-persist to use MongoDb when using Redux server side.",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha -r babel-core/register test/**/*.spec.js"
+    "test": "./node_modules/.bin/mocha test/**/*.spec.js"
   },
   "keywords": [
     "Redux",

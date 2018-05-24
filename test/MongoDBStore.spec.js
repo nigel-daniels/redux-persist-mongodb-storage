@@ -1,17 +1,17 @@
 //var MongoDBStore = require('../index');
-import MongoDBStore from '../index';
-import {expect} from 'chai';
+var MongoDBStore =  require('../index');
+var expect = require('chai').expect;
 
 describe('MongoDBStore API', function() {
 
-	let options = {
+	var options = {
 		url:			'mongodb://localhost:27017/',
 		name:			'testdb',
 		collection:		'stuff'
 	};
 
-	let payload1 = {a: 1, b: 2, c: 3};
-	let payload2 = {a: 4, b: 5, c: 6};
+	var payload1 = {a: 1, b: 2, c: 3};
+	var payload2 = {a: 4, b: 5, c: 6};
 
 	it ('Can configure', function(done) {
 		MongoDBStore.configure(options);
