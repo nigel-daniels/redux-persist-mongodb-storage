@@ -1,11 +1,9 @@
-//var MongoDBStore = require('../index');
 var MongoDBStore =  require('../index');
 var expect = require('chai').expect;
 
 describe('MongoDBStore API', function() {
 
 	var options = {
-		url:			'mongodb://localhost:27017/',
 		name:			'testdb',
 		collection:		'stuff'
 	};

@@ -17,14 +17,15 @@ Then in your code include the store, for example in `store.js`:
 
 ```
 import { createStore } from 'redux';
-import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist-mongodb-storage';
+import { persistStore, persistReducer} from 'redux-persist';
+import MongoDBStore from 'redux-persist-mongodb-storage';
 import reducer from '../reducers';
 
 export default function makeStore() {
+
 	const persistConfig = {
   		key: 'root',
-  		storage,
+  		storage: MongoDBStore
 		}
 
 	const persistedReducer = persistReducer(persistConfig, reducer);
@@ -33,7 +34,23 @@ export default function makeStore() {
 	let persistor = persistStore(store);
 
 	return { store, persistor };
-}
+	}
+```
+
+In order to supply a custom configuration you can do something like the following:
+
+```
+var options = {
+	name:			'testdb',
+	collection:		'stuff'
+	}
+
+MongoDBStore.configure(options);
+
+const persistConfig = {
+	key: 'root',
+	storage: MongoDBStore
+	}
 ```
 
 ## Configuring MongoDb
